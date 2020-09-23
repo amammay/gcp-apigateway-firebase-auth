@@ -1,0 +1,17 @@
+steps:
+
+  # Run the docker build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/greeter', '.' ]
+
+  # push the docker image to the private GCR registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'gcr.io/$PROJECT_ID/greeter' ]
+
+  # deploy to cloud run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [ 'run', 'deploy', 'greeter', '--image', 'gcr.io/$PROJECT_ID/greeter', '--region', 'us-central1', '--platform', 'managed', '--no-allow-unauthenticated' ]
+
+images:
+  - 'gcr.io/$PROJECT_ID/greeter'

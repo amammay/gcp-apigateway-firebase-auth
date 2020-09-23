@@ -1,0 +1,41 @@
+swagger: '2.0'
+info:
+  # Title of the api gateway
+  title: gateway
+  description: Sample API on API Gateway with a Cloud Run backend
+  version: 1.0.0
+schemes:
+  - https
+produces:
+  - application/json
+# The cloud run service url, this could also be defined per path as well in case you have multiple cloud run services that
+# make up a single gateway
+x-google-backend:
+  address: https://greeter-vey5lrd3ma-uc.a.run.app
+securityDefinitions:
+  firebase:
+    authorizationUrl: ""
+    flow: "implicit"
+    type: "oauth2"
+    # Replace YOUR-PROJECT-ID with your project ID
+    x-google-issuer: "https://securetoken.google.com/api-gateway-example"
+    x-google-jwks_uri: "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+    x-google-audiences: "api-gateway-example"
+paths:
+  /greet:
+    get:
+      summary: Greets the user
+      operationId: greet
+      # define that our service uses the firebase security definition
+      security:
+        - firebase: [ ]
+      responses:
+        '200':
+          description: A successful response
+          schema:
+            type: object
+            # our object look like `{name: ""}`
+            properties:
+              name:
+                type: string
+                description: The users name
